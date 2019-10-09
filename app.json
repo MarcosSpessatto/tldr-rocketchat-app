@@ -1,0 +1,15 @@
+{
+    "id": "256fd4d1-4a6e-4335-92e4-49a80ce54cb3",
+    "version": "0.0.1",
+    "requiredApiVersion": "^1.6.0-beta",
+    "iconFile": "icon.png",
+    "author": {
+        "name": "Marcos Defendi",
+        "homepage": "https://github.com/MarcosSpessatto/scratch-rocketchat-app",
+        "support": "https://github.com/MarcosSpessatto/scratch-rocketchat-app"
+    },
+    "name": "tldr",
+    "nameSlug": "tldr",
+    "classFile": "TldrApp.ts",
+    "description": "App to summarize contents"
+}
