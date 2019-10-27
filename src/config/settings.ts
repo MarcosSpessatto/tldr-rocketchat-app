@@ -42,20 +42,20 @@ export const settings: Array<ISetting> = [
 		id: AppSetting.cronJobServiceFrequency,
 		type: SettingType.SELECT,
 		packageValue: '{"hour": "*", "minute": "*/1", "day": "*", "day_of_week": "*"}',
-		value: '{"hour": "*", "minute": "*/1", "day": "*", "day_of_week": "*"}',
+		value: '{"hour": "*", "minute": "*/1", "day": "*", "day_of_week": "*", "frequency": "every_minute"}',
 		values: [{
-			key: '{"hour": "12", "minute": "0", "day": "*", "day_of_week": "*"}',
+			key: '{"hour": "12", "minute": "0", "day": "*", "day_of_week": "*", "frequency": "every_day_at_12"}',
 			i18nLabel: 'every_day_12_hours_label',
 		}, {
-			key: '{"hour": "12", "minute": "0", "day": "*", "day_of_week": "3"}',
+			key: '{"hour": "12", "minute": "0", "day": "*", "day_of_week": "3", "frequency": "every_wed"}',
 			i18nLabel: 'every_wednesday_12_label',
 		},
 		{
-			key: '{"hour": "*", "minute": "*/1", "day": "*", "day_of_week": "*"}',
+			key: '{"hour": "*", "minute": "*/1", "day": "*", "day_of_week": "*", "frequency": "every_minute"}',
 			i18nLabel: 'every_minute_label',
 		},
 		{
-			key: '{"hour": "*/12", "minute": "0", "day": "*", "day_of_week": "*"}',
+			key: '{"hour": "*/12", "minute": "0", "day": "*", "day_of_week": "*", "frequency": "every_12"}',
 			i18nLabel: 'every_12_hours_label',
 		}],
 		required: true,

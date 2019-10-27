@@ -5,7 +5,7 @@ import { AppSetting } from './settings';
 export class CronJobSetup {
 	private http: IHttp;
 	private settingsHelper: SettingsHelper;
-	private CRON_NAME: string = 'rocketchat-scratch';
+	private CRON_NAME: string = 'rocketchat-tldr';
 
 	constructor(http: IHttp, settingsHelper: SettingsHelper) {
 		this.http = http;
@@ -31,26 +31,34 @@ export class CronJobSetup {
 		const { jobs } = response.data;
 		const rcJob = jobs && jobs.find((job) => job.name === this.CRON_NAME);
 		if (rcJob) {
+			const { hour, minute, day, day_of_week } = JSON.parse(settingValue);
 			return await this.http.put(`${await this.getBaseUrl()}/api/v1/jobs/${rcJob.job_id}`, {
 				data: {
 					job_class_string: 'simple_scheduler.jobs.curl_job.CurlJob',
 					name: this.CRON_NAME,
 					pub_args: [endpoint, 'GET'],
 					month: '*',
-					...JSON.parse(settingValue),
+					hour,
+					minute,
+					day,
+					day_of_week,
 				},
 			});
 		}
 	}
 
 	private async createCronJob(endpoint: string, settingValue: string): Promise<any> {
+		const { hour, minute, day, day_of_week } = JSON.parse(settingValue);
 		return await this.http.post(`${await this.getBaseUrl()}/api/v1/jobs`, {
 			data: {
 				job_class_string: 'simple_scheduler.jobs.curl_job.CurlJob',
 				name: this.CRON_NAME,
 				pub_args: [endpoint, 'GET'],
 				month: '*',
-				...JSON.parse(settingValue),
+				hour,
+				minute,
+				day,
+				day_of_week,
 			},
 		});
 	}

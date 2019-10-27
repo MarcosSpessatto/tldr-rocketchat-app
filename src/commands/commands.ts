@@ -1,13 +1,15 @@
 import { IHttp, IModify, IPersistence, IRead } from '@rocket.chat/apps-engine/definition/accessors';
 import { ISlashCommand, SlashCommandContext } from '@rocket.chat/apps-engine/definition/slashcommands';
+import { SummaryHandler } from '../handlers/summary.handler';
 import { MessageHelper } from '../helpers/message.helper';
 import { RoomHelper } from '../helpers/room.helper';
 import { SettingsHelper } from '../helpers/settings.helper';
 import { StorageHelper } from '../helpers/storage.helper';
+import { NluSdk } from '../nlu-sdk/nlu-sdk';
 import { AppSetting } from './../config/settings';
 import { UserHelper } from './../helpers/user.helper';
+import { AddRoomCommand } from './add-room';
 import { HelpCommand } from './help';
-import { SendContentCommand } from './send-content';
 
 export class Commands implements ISlashCommand {
 	public command = 'tldr';
@@ -22,34 +24,40 @@ export class Commands implements ISlashCommand {
 		const userToSendMessageAsBot = await userHelper.getUserByUsername('rocket.cat');
 		const sender = context.getSender();
 		const room = context.getRoom();
-		const userIsAllowed = sender.roles.includes('teacher') || (sender.roles.includes('tutor') && (await settingsHelper.getAppSettingById(AppSetting.sendSummariesToTutor)).value === true);
+		if (!(await settingsHelper.getAppSettingById(AppSetting.summarizationServiceUrl)).value) {
+			return await messageHelper.notifyUser(room, userToSendMessageAsBot, sender, 'Por favor verifique as configurações do TLDR, pois alguma coisa está faltando. =)');
+		}
+		// tslint:disable-next-line: max-line-length
+		const userIsAllowed = sender.roles.includes('admin') || sender.roles.includes('teacher') || (sender.roles.includes('tutor') && (await settingsHelper.getAppSettingById(AppSetting.sendSummariesToTutor)).value === true);
 		if (!userIsAllowed) {
 			return await messageHelper.notifyUser(room, userToSendMessageAsBot, sender, 'Você não pode executar este comando.');
 		}
-		// const helpCommand = new HelpCommand(messageHelper, userHelper);
-		// const listStudentCommand = new NotifyTeachersHandler(
-		// 	new UserHelper(read),
-		// 	new RoomHelper(read, modify),
-		// 	new MessageHelper(modify),
-		// 	new StorageHelper(persistence, read.getPersistenceReader()),
-		// 	new Analytics(http, settingsHelper),
-		// 	settingsHelper,
-		// );
-		// const sendContentCommand = new SendContentCommand(
-		// 	messageHelper,
-		// 	userHelper,
-		// 	new StorageHelper(persistence, read.getPersistenceReader()),
-		// 	new RoomHelper(read, modify));
-		// const [command] = context.getArguments();
-		// if (!command) {
-		// 	return await helpCommand.run(context);
-		// }
-		// const commands = {
-		// 	'enviar-conteudo': () => sendContentCommand.run(context),
-		// 	'listar-alunos': () => listStudentCommand.run(context),
-		// 	'ajuda': () => helpCommand.run(context),
-		// };
-		// return await commands[command]();
+		const helpCommand = new HelpCommand(messageHelper, userHelper);
+		const nluServiceUrl = (await read.getEnvironmentReader().getSettings().getById(AppSetting.summarizationServiceUrl)).value;
+		const summaryCommand = new SummaryHandler(
+			new UserHelper(read),
+			new RoomHelper(read, modify),
+			new MessageHelper(modify),
+			new StorageHelper(persistence, read.getPersistenceReader()),
+			settingsHelper,
+			new NluSdk(http, nluServiceUrl),
+		);
+		const addRoomCommand = new AddRoomCommand(
+			new StorageHelper(persistence, read.getPersistenceReader()),
+			new MessageHelper(modify),
+			new UserHelper(read),
+			new RoomHelper(read, modify),
+		);
+		const [command] = context.getArguments();
+		if (!command) {
+			return await helpCommand.run(context);
+		}
+		const commands = {
+			'adicionar-sala': () => addRoomCommand.run(context),
+			'resumir': () => summaryCommand.run(context),
+			'ajuda': () => helpCommand.run(context),
+		};
+		return await commands[command]();
 	}
 
 }

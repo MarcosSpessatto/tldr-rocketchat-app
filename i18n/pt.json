@@ -9,7 +9,7 @@
     "every_day_12_hours_label": "Todos os dias às 12:00",
     "every_wednesday_12_label": "Todas às quartas às 12:00",
     "every_minute_label": "A cada minuto",
-    "tldr_params": "resumir",
+    "tldr_params": "ajuda, resumir, adicionar-sala",
     "tldr_description": "Interaja com o TLDR",
     "send_summaries_to_tutor_label": "Permitir que tutores recebam resumos?",
     "send_summaries_to_tutor_description": ""

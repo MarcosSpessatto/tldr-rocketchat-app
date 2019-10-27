@@ -23,6 +23,10 @@ export class RoomHelper {
 		return await this.read.getRoomReader().getMembers((await this.getRoomByRoomName(roomName)).id);
 	}
 
+	public async getRoomMembersByRoomId(roomId: string): Promise<Array<IUser>> {
+		return await this.read.getRoomReader().getMembers(roomId);
+	}
+
 	public async createDMRoom(sender: IUser, receiver: IUser): Promise<string> {
 		const room = this
 			.modify
