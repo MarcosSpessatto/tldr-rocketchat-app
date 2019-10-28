@@ -38,8 +38,8 @@ export class SummaryHandler {
 		const usersToSend = context
 			? [context.getSender()]
 			: await this.getUsersToSendSummary();
-		const { sentences } = await this.nluSdk.getSummary(frequency);
 		for (const room of roomsToSendSummary) {
+			const { sentences } = await this.nluSdk.getSummary(frequency, room.id);
 			for (const user of usersToSend) {
 				const dm = await this.roomHelper.getRoomById((await this.roomHelper.createDMRoom(sender, user)));
 				if (!sentences.length) {

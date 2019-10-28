@@ -30,7 +30,7 @@ export class TldrApp extends App implements IPostMessageSent {
 	public async executePostMessageSent(message: IMessage, read: IRead, http: IHttp, persistence: IPersistence, modify: IModify): Promise<void> {
 		if (message.sender.id !== 'rocket.cat') {
 			const baseUrl = (await read.getEnvironmentReader().getSettings().getById(AppSetting.summarizationServiceUrl)).value;
-			await http.post(`${baseUrl}/save-message`, { data: { text: message.text, createdAt: message.createdAt, updatedAt: message.updatedAt } });
+			await http.post(`${baseUrl}/save-message`, { data: { text: message.text, createdAt: message.createdAt, updatedAt: message.updatedAt, room: message.room.id } });
 		}
 	}
 
