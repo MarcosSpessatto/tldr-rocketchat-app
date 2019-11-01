@@ -43,14 +43,14 @@ export class SummaryHandler {
 			for (const user of usersToSend) {
 				const dm = await this.roomHelper.getRoomById((await this.roomHelper.createDMRoom(sender, user)));
 				if (!sentences.length) {
-					if (!context) {
-						return;
+					if (context) {
+						await this.messageHelper.notifyUser(room, sender, context.getSender(), `:newspaper2: \`Parece que não foram enviadas mensagens no grupo ${room.displayName} no período =(\`:newspaper2:`);
 					}
-					return await this.messageHelper.notifyUser(room, sender, context.getSender(), `:newspaper2: \`Parece que não foram enviadas mensagens no grupo ${room.displayName} no período =(\`:newspaper2:`);
-				}
-				await this.messageHelper.sendMessage(dm, sender, `:newspaper2: \`Aqui está o resumo do que aconteceu no grupo ${room.displayName}\`:newspaper2:`);
-				for (const sentence of sentences) {
-					await this.messageHelper.sendMessage(dm, sender, sentence);
+				} else {
+					await this.messageHelper.sendMessage(dm, sender, `:newspaper2: \`Aqui está o resumo do que aconteceu no grupo ${room.displayName}\`:newspaper2:`);
+					for (const sentence of sentences) {
+						await this.messageHelper.sendMessage(dm, sender, sentence);
+					}
 				}
 			}
 		}
